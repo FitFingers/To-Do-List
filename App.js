@@ -1,65 +1,96 @@
 import React, { Component } from 'react';
+import logo from './logo.svg';
 import './App.css';
 import {useState, useEffect} from "react";
 
-function Title() {
+
+const appStyle = {
+  maxWidth: 660,
+  margin: "auto",
+  border: "1px solid black",
+};
+const titleStyle = {
+  
+};
+const listStyle = {
+
+};
+const listItemStyle = {
+  borderTop: "1px solid black",
+  borderBottom: "1px solid black",
+  width: "100%",
+};
+const optionsStyle = {
+  display: "flex",
+};
+const filterStyle = {
+  flex: 1,
+  alignSelf: "center",
+  justifySelf: "center,"
+};
+
+const Title = () => <div><h1>Don't Forget:</h1></div>;
+
+function InputBox(props) {
   return (
     <div>
-      <h1>Don't Forget:</h1>
+      <input type="text" value={props.input} onChange={props.handleInput} onKeyDown={props.submitTask} placeholder="Enter task..." />
     </div>
   );
 }
 
-// function MainCont() {
-//   return (
-//     <div>
-//       <InputBox />
-      
-//     </div>
-//   );
-// }
 
-function InputBox() {
-  const [input, setInput] = useState("");
-}
 
 function List(props) {
   return (
     <div>
-      {this.props.list.map(i => <div><p>{i}</p></div>)}
+      {props.list.map(i => <div key={i} style={listItemStyle}><p>{i}</p></div>)}
     </div>
   );
 }
+
+
 
 function Options(props) {
   return (
-    <div>
-      <p>Num i left</p>
-      <div>
-        <button>All</button>
-        <button>Active</button>
-        <button>Completed</button>
+    <div style={optionsStyle}>
+      <div style={{flex: 1}}><p>{props.list.length} tasks remaining</p></div>
+      <div style={{display: "flex"}}>
+        <div style={filterStyle}><button>All</button></div>
+        <div style={filterStyle}><button>Active</button></div>
+        <div style={filterStyle}><button>Completed</button></div>
       </div>
-      <button>Clear completed</button>
+      <div style={{flex: 1, alignSelf: "center", justifySelf: "center"}}><button>Clear completed</button></div>
     </div>
   );
 }
 
-// function ListItem() {
-//   const 
-// }
 
-const App = () => {
-  const [list, setList] = useState([]);
+
+function App() {
+  const [input, setInput] = useState("");
+  const [list, setList] = useState(["run", "walk", "saunter"]);
+  
+  function handleInput(event) {
+    setInput(event.target.value);
+  }
+
+  function submitTask(event) {
+    if (event.key === "Enter") {
+      list.push(input);
+      // setList(list.push(input)); This transforms the list to the list.length. Is it bad to not use this second parameter to set the state?
+      setInput("");
+    };
+  }
+
   return (
-    <div className="App">
+    <div className="App" style={appStyle}>
       
       <Title />
-
       <div id="mainCont">
-        <InputBox />
-        <List />
-        <Options />
+        <InputBox input={input} handleInput={handleInput} submitTask={submitTask}/>
+        <List list={list}/>
+        <Options list={list}/>
       </div>
 
     </div>
