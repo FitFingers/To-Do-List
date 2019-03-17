@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {useState, useEffect} from "react";
+import {useState, useEffect, useReducer} from "react";
 
 
 const appStyle = {
@@ -17,6 +17,7 @@ const listStyle = {
 };
 const listItemStyle = {
   listStyle: "none",
+  marginTop: "-1px",
   borderTop: "1px solid black",
   borderBottom: "1px solid black",
   textAlign: "left",
@@ -104,7 +105,6 @@ function Options(props) {
 
 function App() {
   const [input, setInput] = useState("");
-  // const [list, setList] = useState([{task: "sleep", active: true}, {task: "eat dinner", active: true}, {task: "walk the dog", active: true}]);
   const [list, setList] = useState([]);
   const [display, setDisplay] = useState("all");
   
@@ -135,24 +135,12 @@ function App() {
     setList(list.filter(l => l.active === true));
   }
 
-  // function handleLocalStorage() {
-  //   list.map(l => {
-  //     localStorage.setItem(l.task, l.active);
-  //   });
-  //   let localList = {...localStorage},
-  //       newList = Object.keys(localList).map(k => ({[k]: localList[k] === "true"}));
-  //   // setList(newList);
-  //   console.log(newList);
-  // }
-
-  // On every render update
   useEffect(() => {
     list.map(l => {
       localStorage.setItem(l.task, l.active);
     });
   });
 
-  // Only on mount (extra array parameter)
   useEffect(() => {
     let localList = {...localStorage},
         newList = Object.keys(localList).map(k => ({task: k, active: localList[k] === "true"}));
