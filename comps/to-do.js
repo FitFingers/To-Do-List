@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import {useState, useEffect, useReducer, useContext} from "react";
 import firebase from 'firebase';
+import {UserContext} from "../App.js";
 
 window.firebase = firebase;
 
@@ -104,32 +105,31 @@ function Options() {
 
 
 
-export function ToDoApp() {
+function ToDoApp() {
   const [input, setInput] = useState("");
   const [list, setList] = useState([]);
   const [display, setDisplay] = useState("all");
+  const User = useContext(UserContext);
+  // const collectionPath = String(User.user.uid);
+  let collectionPath = String(User.user.uid);
+
+  // async function setPath() {
+  //   collectionPath = await String(User.user.uid);
+  // }
   
   function handleInput(event) {
     setInput(event.target.value);
   }
 
   function submitTask(event) {
-      // Write locally to session>list.
-    // if (event.key === "Enter") {
-    //   list.push({
-    //     task: input,
-    //     active: true
-    //   });
-    //   setInput("");
-    // };
-
-    // Write directly to DB and store list and write data locally
     if (event.key === "Enter") {
-      db.collection("user1").add({
+      db.collection(collectionPath).add({
         task: input,
         active: true
       })
-      .then((docRef) => setList(list.concat({task: input, active: true, id: docRef.id, online: true})))
+      .then((docRef) => {
+          setList(list.concat({task: input, active: true, id: docRef.id, online: true}));
+        })
       .catch((error) => setList(list.concat({task: input, active: true, id: null, online: false, error: error})));
       setInput("");
     };
@@ -143,23 +143,26 @@ export function ToDoApp() {
 
   function clearCompleted() {
     list.map(l => {
-    //   if (l.active === false) localStorage.removeItem(l.task);
-        if (l.active === false) db.collection("user1").doc(l.id).delete().then(() => console.log("Task successfully removed: " + l.id)).catch((error) => console.log("Error removing document: " + error));
+        if (l.active === false) db.collection(collectionPath).doc(l.id).delete().then(() => console.log("Task successfully removed: " + l.id)).catch((error) => console.log("Error removing document: " + error));
     });
     setList(list.filter(l => l.active === true));
   }
 
-    async function initialisePage() {
-        const dataList = await db.collection("user1").get().then((qSnap) => qSnap.docs.map(d => ({task: d.data().task, active: d.data().active, id:d.id})));
-        setList(dataList);
-    }
+  const onMount = () => {
+    collectionPath = String(User.user.uid);
+    db.collection(collectionPath).onSnapshot(async (snapshot) => {
+        const DATA = await snapshot.docs.map(d => ({...d.data(), id:d.id}));
+        setList(DATA);
+    });
+    console.log("Initialised snapshot at: " + new Date());
+  }
 
-    useEffect(() => {
-        initialisePage();
-    }, []);
+    // This runs on mount and also when the auth state changes (this solves the async problem when using DIY routing/whole page refreshing: the page loaded before the login status was recognised, so the list wasn't being rendered as the uid was undefined, and once it was valid, it wasn't called)
+    useEffect(() => onMount(), [User.user]);
 
     return (
         <div>
+          { User.user ?
             <FunctionContext.Provider value={{input, list, display, setList, handleInput, submitTask, setDisplay, clearCompleted}}>
                 <div id="mainApp" style={{maxWidth:660, margin:"auto", border:"thin solid black"}}>
                 <Title />
@@ -168,6 +171,11 @@ export function ToDoApp() {
                 <Options />
                 </div>
             </FunctionContext.Provider>
+            :
+            <h1>Please log in to use the app.</h1>
+          }
         </div>
     );
 }
+
+export default ToDoApp;

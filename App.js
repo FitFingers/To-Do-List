@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {useState, useEffect, useReducer, useContext} from "react";
+import { Router, Link } from "@reach/router"
 import firebase from 'firebase';
 import './firebase'; 
 import {PAGES} from "./constants/routes.js";
@@ -24,7 +25,7 @@ const appStyle = {
 function App() {
   const [user, setUser] = useState("");
 
-  useEffect(() => { firebase.auth().onAuthStateChanged((user) => user ? setUser(user) : setUser(""))}, []);
+  useEffect(() => { firebase.auth().onAuthStateChanged((currUser) => currUser ? setUser(currUser) : setUser(""))}, []);
 
   return (
     <div className="App" style={appStyle}>
@@ -32,7 +33,15 @@ function App() {
     <UserContext.Provider value={{user, setUser}}>
       <Nav />
 
-      { window.location.href === ("http://localhost:3000/") ?
+      <Router>
+        <Home path="/" />
+        <ToDoApp path={PAGES.APP.link} />
+        <SignUp path={PAGES.SIGN_UP.link} />
+        <SignIn path={PAGES.SIGN_IN.link} />
+        <Account path={PAGES.ACCOUNT.link} />
+      </Router>
+
+      {/* { window.location.href === ("http://localhost:3000/") ?
         <Home /> :
       window.location.href === `http://localhost:3000${PAGES.APP.link}` ?
         <ToDoApp /> :
@@ -42,9 +51,7 @@ function App() {
         <SignIn />  :
       window.location.href === `http://localhost:3000${PAGES.ACCOUNT.link}` ?
         <Account /> :
-        <ErrorPage />}
-
-        <p>You are logged in as: {user.displayName || "-Anon-"}</p>
+        <ErrorPage />} */}
 
     </UserContext.Provider>
 
