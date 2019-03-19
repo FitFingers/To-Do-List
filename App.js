@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import {useState, useEffect, useReducer, useContext} from "react";
+import {useState, useEffect} from "react";
 import { Router, Link } from "@reach/router"
 import firebase from 'firebase';
 import './firebase'; 
@@ -39,6 +39,7 @@ function App() {
         <SignUp path={PAGES.SIGN_UP.link} />
         <SignIn path={PAGES.SIGN_IN.link} />
         <Account path={PAGES.ACCOUNT.link} />
+        <ErrorPage default />
       </Router>
 
       {/* { window.location.href === ("http://localhost:3000/") ?

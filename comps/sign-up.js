@@ -1,17 +1,12 @@
 import React from "react";
-import {useState, useEffect, useContext} from "react";
-import {handleSubmit} from "../funcs/submit.js";
+import {useState} from "react";
 import firebase from 'firebase';
-import {UserContext} from "../App.js";
-
-// window.firebase = firebase;
 
 function SignUp() {
     const inputStyle = {display: "block", margin: "6px auto"};
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [passwd, setPasswd] = useState("");
-    const User = useContext(UserContext);
 
     function handleInput(event) {
         event.target.name === "email" ? 
@@ -25,7 +20,7 @@ function SignUp() {
         firebase.auth().createUserWithEmailAndPassword(email, passwd)
         .then(() => firebase.auth().currentUser.updateProfile({displayName: name}))
         .then(() => alert("Account created for " + email))
-        .then(() => { setEmail(""); setPasswd("") })
+        .then(() => { setEmail(""); setPasswd(""); setName("") })
         .catch((error) => alert("Error: " + error));
         event.preventDefault();
     }

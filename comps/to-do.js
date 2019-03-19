@@ -110,12 +110,7 @@ function ToDoApp() {
   const [list, setList] = useState([]);
   const [display, setDisplay] = useState("all");
   const User = useContext(UserContext);
-  // const collectionPath = String(User.user.uid);
   let collectionPath = String(User.user.uid);
-
-  // async function setPath() {
-  //   collectionPath = await String(User.user.uid);
-  // }
   
   function handleInput(event) {
     setInput(event.target.value);
@@ -160,15 +155,19 @@ function ToDoApp() {
     // This runs on mount and also when the auth state changes (this solves the async problem when using DIY routing/whole page refreshing: the page loaded before the login status was recognised, so the list wasn't being rendered as the uid was undefined, and once it was valid, it wasn't called)
     useEffect(() => onMount(), [User.user]);
 
+    // This is a memo hook. It remmebers the variable within the curly braces and only rerenders/runs the function within if the square-bracketed variable changes.
+    // const test = useMemo(() => ({ list }) ,[list])
+
+
     return (
         <div>
           { User.user ?
             <FunctionContext.Provider value={{input, list, display, setList, handleInput, submitTask, setDisplay, clearCompleted}}>
                 <div id="mainApp" style={{maxWidth:660, margin:"auto", border:"thin solid black"}}>
-                <Title />
-                <InputBox selectAll={selectAll} />
-                <List />
-                <Options />
+                  <Title />
+                  <InputBox selectAll={selectAll} />
+                  <List />
+                  <Options />
                 </div>
             </FunctionContext.Provider>
             :

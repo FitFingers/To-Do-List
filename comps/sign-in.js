@@ -1,15 +1,13 @@
 import React from "react";
-import {useState, useContext} from "react";
-import {handleSubmit} from "../funcs/submit.js";
+import {useState} from "react";
 import firebase from "firebase";
-// import {UserContext} from "../App.js";
+import {Router, navigate} from "@reach/router";
 
 function SignIn() {
     const inputStyle = {display: "block", margin: "6px auto"};
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [passwd, setPasswd] = useState("");
-    // const User = useContext(UserContext);
 
     function handleInput(event) {
         event.target.name === "email" ? 
@@ -19,10 +17,11 @@ function SignIn() {
             setName(event.target.value);
     }
 
-    // Actually, the form is totally unnecessary.
+    // Actually, the form is totally unnecessary (?)
     function handleSignIn(event) {
         firebase.auth().signInWithEmailAndPassword(email, passwd)
-        .then(() => { setEmail(""); setPasswd("")})
+        .then(() => { setEmail(""); setPasswd(""); setName("")})
+        .then(() => navigate("/account"))
         .catch((error) => alert("Error: " + error));
         event.preventDefault();
     }

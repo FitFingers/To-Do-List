@@ -16,15 +16,16 @@ function Nav() {
     return(
         <div style={{margin:"24px auto", borderBottom:"thin solid black"}}>
             <ul style={{listStyle:"none", paddingLeft:0, position:"relative"}}>
-                {Object.values(PAGES).map(p => <Link to={p.link} key={p.text + "-link"} style={{display:"inline-block", textDecoration:"none", margin:"auto 8px"}}>{p.text}</Link>)}
-                    {/* return <a key={p.text} href={p.link}>
-                        <li style={{display:"inline-block", margin:"auto 8px"}}>{p.text}</li>
-                    </a> */}
+                { User.user.uid ?
+                    Object.values(PAGES).filter(p => p.hideSignIn !== true).map(p => <Link to={p.link} key={p.text + "-link"} style={{display:"inline-block", textDecoration:"none", margin:"auto 8px"}}>{p.text}</Link>)
+                    :
+                    Object.values(PAGES).map(p => <Link to={p.link} key={p.text + "-link"} style={{display:"inline-block", textDecoration:"none", margin:"auto 8px"}}>{p.text}</Link>)
+                }
                 
                 {User.user.displayName ? (
                 <div style={{position:"absolute", right:6, top: -18}}>
                     <span style={{fontSize:"0.7em"}}>Welcome, {User.user.displayName}.</span>
-                    <button onClick={logout} style={{display:"block", margin:"4px auto"}}>Log out</button>
+                    <button onClick={logout} style={{display:"block", margin:"4px auto"}}>Sign out</button>
                 </div>
                 ) : (
                 <div style={{position:"absolute", top:-2, right: 6, fontSize: "0.7em"}}>
